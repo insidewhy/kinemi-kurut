@@ -1,0 +1,27 @@
+{
+  "name": "Kinemi Kurut",
+  "version": "0.1",
+  "description": "Tab selection extension",
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "commands": {
+    "select-previous-tab": {
+      "suggested_key": { "default": "Ctrl+Comma" },
+      "description": "Select previous tab"
+    },
+    "select-previous-tab-group": {
+      "suggested_key": { "default": "Shift+Ctrl+Comma" },
+      "description": "Select previous tab group"
+    },
+    "select-next-tab": {
+      "suggested_key": { "default": "Ctrl+Period" },
+      "description": "Select next tab"
+    },
+    "select-next-tab-group": {
+      "suggested_key": { "default": "Shift+Ctrl+Period" },
+      "description": "Select next tab group"
+    }
+  },
+  "manifest_version": 3
+}
