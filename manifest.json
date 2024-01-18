@@ -21,7 +21,14 @@
     "select-next-tab-group": {
       "suggested_key": { "default": "Shift+Ctrl+Period" },
       "description": "Select next tab group"
+    },
+    "bookmark-tab-groups": {
+      "description": "Bookmark tab groups"
+    },
+    "restore-tab-groups": {
+      "description": "Restore bookmarked tab groups"
     }
   },
+  "permissions": ["tabs", "tabGroups", "bookmarks"],
   "manifest_version": 3
 }
