@@ -133,7 +133,15 @@ async function restoreTabGroups(): Promise<void> {
   }
 }
 
-chrome.commands.onCommand.addListener(async function (command: string): Promise<void> {
+async function openMenu(): Promise<void> {
+  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  const tabId = tab?.id
+  if (tabId) {
+    chrome.tabs.sendMessage(tabId, { type: 'toggle-modal' })
+  }
+}
+
+function runCommand(command: string): void {
   if (command === 'select-next-tab') {
     selectTab(1)
   } else if (command === 'select-previous-tab') {
@@ -146,5 +154,15 @@ chrome.commands.onCommand.addListener(async function (command: string): Promise<
     bookmarkTabGroups()
   } else if (command === 'restore-tab-groups') {
     restoreTabGroups()
+  } else if (command === 'open-menu') {
+    openMenu()
   }
+}
+
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  runCommand(message)
+  sendResponse()
+  return undefined
 })
+
+chrome.commands.onCommand.addListener(runCommand)

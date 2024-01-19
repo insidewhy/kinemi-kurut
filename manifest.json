@@ -6,28 +6,36 @@
   "background": {
     "service_worker": "dist/service-worker.js"
   },
+  "content_scripts": [
+    {
+      "js": [ "dist/content-script.js"],
+      "matches": [ "<all_urls>"]
+    }
+  ],
   "commands": {
-    "select-previous-tab": {
-      "suggested_key": { "default": "Ctrl+Comma" },
-      "description": "Select previous tab"
+    "select-next-tab-group": {
+      "suggested_key": { "default": "Ctrl+Period" },
+      "description": "Select next tab group"
     },
     "select-previous-tab-group": {
-      "suggested_key": { "default": "Shift+Ctrl+Comma" },
+      "suggested_key": { "default": "Ctrl+Comma" },
       "description": "Select previous tab group"
     },
-    "select-next-tab": {
-      "suggested_key": { "default": "Ctrl+Period" },
-      "description": "Select next tab"
-    },
-    "select-next-tab-group": {
-      "suggested_key": { "default": "Shift+Ctrl+Period" },
-      "description": "Select next tab group"
+    "open-menu": {
+      "suggested_key": { "default": "Ctrl+G" },
+      "description": "Open menu"
     },
     "bookmark-tab-groups": {
       "description": "Bookmark tab groups"
     },
     "restore-tab-groups": {
       "description": "Restore bookmarked tab groups"
+    },
+    "select-previous-tab": {
+      "description": "Select previous tab"
+    },
+    "select-next-tab": {
+      "description": "Select next tab"
     }
   },
   "permissions": ["tabs", "tabGroups", "bookmarks"]
