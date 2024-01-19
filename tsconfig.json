@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "lib": ["es2019", "dom"],
+    "types": ["chrome-types", "node"],
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "noEmit": true,
+    "sourceMap": true,
+    "preserveWatchOutput": true,
+    "outDir": "dist",
+    "target": "es2019"
+  }
+}

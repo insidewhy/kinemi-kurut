@@ -1,9 +1,10 @@
 {
+  "manifest_version": 3,
   "name": "Kinemi Kurut",
   "version": "0.1",
   "description": "Tab selection extension",
   "background": {
-    "service_worker": "service-worker.js"
+    "service_worker": "dist/service-worker.js"
   },
   "commands": {
     "select-previous-tab": {
@@ -29,6 +30,5 @@
       "description": "Restore bookmarked tab groups"
     }
   },
-  "permissions": ["tabs", "tabGroups", "bookmarks"],
-  "manifest_version": 3
+  "permissions": ["tabs", "tabGroups", "bookmarks"]
 }

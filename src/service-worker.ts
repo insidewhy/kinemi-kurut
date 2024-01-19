@@ -1,6 +1,6 @@
-const BOOKMARK_TITLE = "Tab Groups"
+const BOOKMARK_TITLE = 'Tab Groups'
 
-async function selectTab(offset) {
+async function selectTab(offset: number): Promise<void> {
   const tabs = await chrome.tabs.query({ currentWindow: true })
   const activeIndex = tabs.findIndex(tab => tab.active)
   const nextIndex = (activeIndex + offset + tabs.length) % tabs.length
@@ -10,11 +10,11 @@ async function selectTab(offset) {
 
   const toActivate = tabs[nextIndex]
   if (toActivate) {
-    chrome.tabs.update(toActivate.id, { active: true })
+    chrome.tabs.update(toActivate.id!, { active: true })
   }
 }
 
-async function selectNextTabGroup() {
+async function selectNextTabGroup(): Promise<void> {
   const tabs = await chrome.tabs.query({ currentWindow: true })
   const activeIndex = tabs.findIndex(tab => tab.active)
   const currentGroupId = tabs[activeIndex]?.groupId
@@ -23,13 +23,13 @@ async function selectNextTabGroup() {
     const tab = tabs[i]
     const groupId = tab?.groupId
     if (groupId !== undefined && groupId !== -1 && groupId !== currentGroupId) {
-      chrome.tabs.update(tab.id, { active: true })
+      chrome.tabs.update(tab.id!, { active: true })
       break
     }
   }
 }
 
-async function selectPreviousTabGroup() {
+async function selectPreviousTabGroup(): Promise<void> {
   const tabs = await chrome.tabs.query({ currentWindow: true })
   const activeIndex = tabs.findIndex(tab => tab.active)
   const currentGroupId = tabs[activeIndex]?.groupId
@@ -51,7 +51,7 @@ async function selectPreviousTabGroup() {
       j = (j + tabs.length - 1) % tabs.length
     ) {
       if (tabs[j]?.groupId !== groupId) {
-        chrome.tabs.update(tabs[(j + 1) % tabs.length].id, { active: true })
+        chrome.tabs.update(tabs[(j + 1) % tabs.length].id!, { active: true })
         break
       }
     }
@@ -59,16 +59,16 @@ async function selectPreviousTabGroup() {
   }
 }
 
-async function bookmarkTabGroups() {
-  let bookmarks = await chrome.bookmarks.search({ title: BOOKMARK_TITLE })
+async function bookmarkTabGroups(): Promise<void> {
+  const bookmarks = await chrome.bookmarks.search({ title: BOOKMARK_TITLE })
   if (bookmarks.length) {
     await chrome.bookmarks.removeTree(bookmarks[0].id)
   }
   const { id: parentFolderId } = await chrome.bookmarks.create({ title: BOOKMARK_TITLE })
   const tabs = await chrome.tabs.query({ currentWindow: true })
 
-  let folderIdForGroup
-  let tabGroup
+  let folderIdForGroup: string | undefined
+  let tabGroup: chrome.tabGroups.TabGroup | undefined
   for (const tab of tabs) {
     const groupId = tab?.groupId
     if (groupId === undefined || groupId === -1) {
@@ -79,10 +79,9 @@ async function bookmarkTabGroups() {
       folderIdForGroup = (
         await chrome.bookmarks.create({
           title: `${tabGroup.color}:${tabGroup.title}`,
-          parentId: parentFolderId
+          parentId: parentFolderId,
         })
       ).id
-      prevGroupId = folderIdForGroup
     }
 
     await chrome.bookmarks.create({
@@ -93,42 +92,48 @@ async function bookmarkTabGroups() {
   }
 }
 
-async function restoreTabGroups() {
-  let bookmarks = await chrome.bookmarks.search({ title: BOOKMARK_TITLE })
-  if (! bookmarks.length) {
+async function restoreTabGroups(): Promise<void> {
+  const bookmarks = await chrome.bookmarks.search({ title: BOOKMARK_TITLE })
+  if (!bookmarks.length) {
     return
   }
 
   let nextTabIndex = 0
   const groupsFromBookmarks = await chrome.bookmarks.getChildren(bookmarks[0].id)
   for (const groupFromBookmark of groupsFromBookmarks) {
-    const [color] = groupFromBookmark.title.split(':', 1)
+    const color = groupFromBookmark.title.split(':', 1)[0] as chrome.tabGroups.Color
     const title = groupFromBookmark.title.replace(/^.*?:/, '')
 
+    // TODO: do not close tabs that may be reused
     // search for tab group already existing and remove its tabs if necessary
     const existingGroups = await chrome.tabGroups.query({ title, color })
     if (existingGroups.length) {
-      for (existingGroup of existingGroups) {
+      for (const existingGroup of existingGroups) {
         const existingGroupTabs = await chrome.tabs.query({ groupId: existingGroup.id })
-        await chrome.tabs.remove(existingGroupTabs.map(tab => tab.id))
+        await chrome.tabs.remove(existingGroupTabs.map(tab => tab.id!))
       }
     }
 
     const groupTabsFromBookmark = await chrome.bookmarks.getChildren(groupFromBookmark.id)
+    // TODO: reuse tabs when possible
     const groupTabIds = await Promise.all(
       groupTabsFromBookmark.map(async groupTabFromBookmark => {
         return (
           await chrome.tabs.create({ url: groupTabFromBookmark.url, index: nextTabIndex++ })
-        ).id
-      })
+        ).id!
+      }),
     )
 
-    const groupId = await chrome.tabs.group({ tabIds: groupTabIds })
-    await chrome.tabGroups.update(groupId, { collapsed: false, title, color })
+    if (groupTabIds.length) {
+      const groupId = await chrome.tabs.group({
+        tabIds: groupTabIds as [number, ...number[]],
+      })
+      await chrome.tabGroups.update(groupId, { collapsed: false, title, color })
+    }
   }
 }
 
-chrome.commands.onCommand.addListener(async function (command) {
+chrome.commands.onCommand.addListener(async function (command: string): Promise<void> {
   if (command === 'select-next-tab') {
     selectTab(1)
   } else if (command === 'select-previous-tab') {

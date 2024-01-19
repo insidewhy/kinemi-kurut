@@ -1,0 +1,39 @@
+{
+  "name": "kinemi-kurut",
+  "version": "1.0.0",
+  "description": "browser extension for tab group management",
+  "scripts": {
+    "build": "vite build",
+    "watch": "pnpm run build --watch",
+    "dev": "NODE_ENV=development pnpm run build --watch",
+    "typecheck": "pnpm tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/insidewhy/kinemi-kurut.git"
+  },
+  "author": "James Pike <github@chilon.net>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/insidewhy/kinemi-kurut/issues"
+  },
+  "homepage": "https://github.com/insidewhy/kinemi-kurut#readme",
+  "devDependencies": {
+    "@types/eslint": "^8.56.2",
+    "@types/node": "^20.11.5",
+    "@types/stylelint": "^14.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "chrome-types": "^0.1.251",
+    "eslint": "^8.56.0",
+    "hot-reload-extension-vite": "^1.0.13",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.11",
+    "vite-plugin-checker": "^0.6.2"
+  },
+  "volta": {
+    "pnpm": "8.14.1",
+    "node": "20.11.0"
+  }
+}
