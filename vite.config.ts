@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         'service-worker': resolve(__dirname, 'src/service-worker.ts'),
+        'content-script': resolve(__dirname, 'src/content-script.ts'),
       },
       output: {
         format: 'cjs',
